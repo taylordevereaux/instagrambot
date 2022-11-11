@@ -1,4 +1,4 @@
-import * as puppeteer from 'puppeteer';
+import * as puppeteer from "puppeteer";
 
 interface Post {
   likes: number;
@@ -34,11 +34,12 @@ interface Browser {
   close: CloseBrowser;
   getUserInfo: GetUserInfo;
   getFollowing: GetFollowing;
+  getSaved: GetSaved;
   findPosts: FindPosts;
   commentPost: CommentPost;
   followPost: FollowPost;
   likePost: LikePost;
-  getPostInfo: GetPostInfo;
+  //   getPostInfo: GetPostInfo;
   unfollowUser: UnFollowUser;
   authenticate: Authenticate;
 }
@@ -48,7 +49,10 @@ interface Intent {
   value: string;
 }
 
-type GetPage = (url: string, callback: (page: puppeteer.Page) => Promise<any>) => any;
+type GetPage = (
+  url: string,
+  callback: (page: puppeteer.Page) => Promise<any>
+) => any;
 
 type CloseBrowser = () => Promise<void>;
 
@@ -56,24 +60,41 @@ type GetUserInfo = (this: Browser, username: string) => Promise<UserInfo>;
 
 type GetFollowing = (this: Browser, username: string) => Promise<string[]>;
 
-type FindPosts = (this: Browser, hashtag: string, numberOfPosts: number) => Promise<string[]>;
+type GetSaved = (this: Browser, username: string) => Promise<string[]>;
+
+type FindPosts = (
+  this: Browser,
+  hashtag: string,
+  numberOfPosts: number
+) => Promise<string[]>;
 
 type CommentPost = (
   this: Browser,
   page: puppeteer.Page,
   post: Post,
-  message: string,
+  message: string
 ) => Promise<puppeteer.Page>;
 
-type FollowPost = (this: Browser, page: puppeteer.Page, post: Post) => Promise<puppeteer.Page>;
+type FollowPost = (
+  this: Browser,
+  page: puppeteer.Page,
+  post: Post
+) => Promise<puppeteer.Page>;
 
-type LikePost = (this: Browser, page: puppeteer.Page, post: Post) => Promise<puppeteer.Page>;
+type LikePost = (
+  this: Browser,
+  page: puppeteer.Page,
+  post: Post
+) => Promise<puppeteer.Page>;
 
-type GetPostInfo = (this: Browser, page: puppeteer.Page) => Promise<Post>;
+// type GetPostInfo = (this: Browser, page: puppeteer.Page) => Promise<Post>;
 
 type UnFollowUser = (this: Browser, username: string) => Promise<void>;
 
-type Authenticate = (this: Browser, credentials: UserCredentials) => Promise<boolean>;
+type Authenticate = (
+  this: Browser,
+  credentials: UserCredentials
+) => Promise<boolean>;
 
 type CreateBrowser = () => Promise<Browser>;
 
@@ -87,11 +108,12 @@ export {
   CloseBrowser,
   GetUserInfo,
   GetFollowing,
+  GetSaved,
   FindPosts,
   CommentPost,
   FollowPost,
   LikePost,
-  GetPostInfo,
+  //   GetPostInfo,
   UnFollowUser,
   Authenticate,
   CreateBrowser,

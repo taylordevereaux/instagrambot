@@ -1,13 +1,13 @@
-import { Browser } from 'src/common/interfaces';
-import { reduceAsync, getRandomItem, probability } from 'src/common/utils';
-import { job as jobConfig, auth as authConfig } from 'src/config';
-import { getMessageBasedOnIntent } from 'src/common/wit';
+import {Browser} from "src/common/interfaces";
+import {reduceAsync, getRandomItem, probability} from "src/common/utils";
+import {job as jobConfig, auth as authConfig} from "src/config";
+// import {getMessageBasedOnIntent} from "src/common/wit";
 
 class Job {
   private ranges: number[][] = [];
 
   public execute(browser: Browser) {
-    throw new Error('Execute must be provided.');
+    throw new Error("Execute must be provided.");
   }
 
   public constructor(ranges: number[][]) {
@@ -16,13 +16,11 @@ class Job {
 
   public validateRanges(hour: number): boolean {
     return Boolean(
-      this.ranges.find(
-        (range): boolean => {
-          const [startHour, endHour] = range;
+      this.ranges.find((range): boolean => {
+        const [startHour, endHour] = range;
 
-          return hour >= startHour && hour <= endHour;
-        },
-      ),
+        return hour >= startHour && hour <= endHour;
+      })
     );
   }
 }
@@ -31,37 +29,36 @@ class FollowJob extends Job {
   public async execute(browser: Browser) {
     try {
       const hashtag = getRandomItem(jobConfig.hashtags);
-      const postsUrls = await browser.findPosts(hashtag, jobConfig.numberOfPosts);
+      const postsUrls = await browser.findPosts(
+        hashtag,
+        jobConfig.numberOfPosts
+      );
 
       await reduceAsync<string, void>(
         postsUrls,
         async (prev, url) =>
-          browser.getPage(url, async page => {
+          browser.getPage(url, async (page) => {
             try {
-              const post = await browser.getPostInfo(page);
-
-              await browser.likePost(page, post);
-              console.log('liked');
-
-              await browser.followPost(page, post);
-              console.log('followed');
-
-              const message = getMessageBasedOnIntent(post.postIntent);
-
-              if (probability(jobConfig.commentProbability) && message) {
-                await browser.commentPost(page, post, message);
-                console.log('commented');
-              }
+              //   const post = await browser.getPostInfo(page);
+              //   await browser.likePost(page, post);
+              //   console.log('liked');
+              //   await browser.followPost(page, post);
+              //   console.log('followed');
+              //   const message = getMessageBasedOnIntent(post.postIntent);
+              //   if (probability(jobConfig.commentProbability) && message) {
+              //     await browser.commentPost(page, post, message);
+              //     console.log('commented');
+              //   }
             } catch (e) {
-              console.log('Failed to like/follow/comment.');
+              console.log("Failed to like/follow/comment.");
               console.log(e);
             }
           }),
-        35,
+        35
       );
-      console.log('FollowJob executed successfully.');
+      console.log("FollowJob executed successfully.");
     } catch (e) {
-      console.log('FollowJob failed to execute.');
+      console.log("FollowJob failed to execute.");
       console.log(e);
     }
   }
@@ -77,12 +74,12 @@ class UnfollowJob extends Job {
         async (result, username) => {
           await browser.unfollowUser(username);
         },
-        35,
+        35
       );
 
-      console.log('UnfollowJob executed successfully');
+      console.log("UnfollowJob executed successfully");
     } catch (e) {
-      console.log('UnfollowJob failed to execute.');
+      console.log("UnfollowJob failed to execute.");
       console.log(e);
     }
   }
@@ -93,4 +90,4 @@ const jobs = {
   FollowJob,
 };
 
-export { Job, jobs };
+export {Job, jobs};
