@@ -1,27 +1,28 @@
-import { UnFollowUser } from 'src/common/interfaces';
+import {UnFollowUser} from "src/common/interfaces";
+import {waitFor} from "src/common/utils";
 
 const unfollowUser: UnFollowUser = async function unfollowUser(username) {
   return this.getPage(`/${username}`, async (page) => {
     const unfollowButtonSelector = await page.evaluate(() => {
-      const { scraper } = window as any;
+      const {scraper} = window as any;
       let el = scraper.findOneWithText({
-        selector: 'button',
-        text: 'Following',
+        selector: "button",
+        text: "Following",
       });
 
       if (!el) {
         el = scraper.findOne({
-          selector: 'button._qv64e._t78yp._r9b8f._njrw0',
+          selector: "button._qv64e._t78yp._r9b8f._njrw0",
         });
       }
 
       if (!el) {
-        return '';
+        return "";
       }
 
       return el
-        .setscraperAttr('following', 'following')
-        .getSelectorByscraperAttr('following');
+        .setscraperAttr("following", "following")
+        .getSelectorByscraperAttr("following");
     });
 
     if (!unfollowButtonSelector) {
@@ -32,18 +33,18 @@ const unfollowUser: UnFollowUser = async function unfollowUser(username) {
     await unfollowButton.click();
 
     const confirmUnfollowButtonSelector = await page.evaluate(() => {
-      const { scraper } = window as any;
+      const {scraper} = window as any;
 
       return scraper
-        .findOneWithText({ selector: 'button', text: 'Unfollow' })
-        .setscraperAttr('confirmUnfollowButton', 'confirmUnfollowButton')
-        .getSelectorByscraperAttr('confirmUnfollowButton');
+        .findOneWithText({selector: "button", text: "Unfollow"})
+        .setscraperAttr("confirmUnfollowButton", "confirmUnfollowButton")
+        .getSelectorByscraperAttr("confirmUnfollowButton");
     });
 
     (await page.$(confirmUnfollowButtonSelector)).click();
 
-    await page.waitFor(1500);
+    await waitFor(1500);
   });
 };
 
-export { unfollowUser };
+export {unfollowUser};

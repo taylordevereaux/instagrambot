@@ -1,27 +1,33 @@
-import { FindPosts } from 'src/common/interfaces';
+import {FindPosts} from "src/common/interfaces";
+import {waitFor} from "src/common/utils";
 
-const findPosts: FindPosts = async function findPosts(hashtag, numberOfPosts = 12) {
-  return this.getPage(`/explore/tags/${hashtag}`, async page => {
+const findPosts: FindPosts = async function findPosts(
+  hashtag,
+  numberOfPosts = 12
+) {
+  return this.getPage(`/explore/tags/${hashtag}`, async (page) => {
     if (numberOfPosts > 12) {
-      await page.evaluate(async posts => {
-        const { scraper } = window as any;
+      await page.evaluate(async (posts) => {
+        const {scraper} = window as any;
 
-        await scraper.scrollPageTimes({ times: Math.ceil((posts - 12) / 12) + 1 });
+        await scraper.scrollPageTimes({
+          times: Math.ceil((posts - 12) / 12) + 1,
+        });
       }, numberOfPosts);
     }
 
     // waitFor render
-    await page.waitFor(1500);
+    await waitFor(1500);
 
-    return page.evaluate(posts => {
-      const { scraper } = window as any;
+    return page.evaluate((posts) => {
+      const {scraper} = window as any;
 
       return scraper
-        .find({ selector: 'a[href^="/p/"]', count: posts + 9 })
+        .find({selector: 'a[href^="/p/"]', count: posts + 9})
         .slice(9)
-        .map(el => el.getAttr('href'));
+        .map((el) => el.getAttr("href"));
     }, numberOfPosts);
   });
 };
 
-export { findPosts };
+export {findPosts};

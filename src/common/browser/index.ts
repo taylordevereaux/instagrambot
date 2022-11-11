@@ -1,17 +1,22 @@
-import * as path from 'path';
-import * as puppeteer from 'puppeteer';
-import * as api from './api';
-import { GetPage, CloseBrowser, CreateBrowser } from 'src/common/interfaces';
+const path = require("node:path");
+import * as puppeteer from "puppeteer";
+import * as api from "./api";
+import {GetPage, CloseBrowser, CreateBrowser} from "src/common/interfaces";
 
-const getUrl = (endpoint: string): string => `https://www.instagram.com${endpoint}`;
+const getUrl = (endpoint: string): string =>
+  `https://www.instagram.com${endpoint}`;
 
 const createBrowser: CreateBrowser = async () => {
   let browser = await puppeteer.launch({
     headless: true,
-    args: ['--lang=en-US,en'],
+    args: ["--lang=en-US,en"],
   });
 
-  const getPage: GetPage = async function getPage(endpoint, fn) {
+  const getPage: GetPage = async function getPage(
+    endpoint,
+    fn,
+    responseFn = null
+  ) {
     let page: puppeteer.Page;
     let result;
 
@@ -20,9 +25,9 @@ const createBrowser: CreateBrowser = async () => {
       console.log(url);
       page = await browser.newPage();
 
-      await page.goto(url, { waitUntil: 'load' });
+      await page.goto(url, {waitUntil: "load"});
 
-      page.on('console', msg => {
+      page.on("console", (msg) => {
         const leng = msg.args().length;
         for (let i = 0; i < leng; i += 1) {
           console.log(`${i}: ${msg.args()[i]}`);
@@ -30,7 +35,7 @@ const createBrowser: CreateBrowser = async () => {
       });
 
       await page.addScriptTag({
-        path: path.join(__dirname, '../../../src/common/scraper/scraper.js'),
+        path: path.join(__dirname, "../../../src/common/scraper/scraper.js"),
       });
 
       result = await fn(page);
@@ -58,4 +63,4 @@ const createBrowser: CreateBrowser = async () => {
   };
 };
 
-export { createBrowser };
+export {createBrowser};

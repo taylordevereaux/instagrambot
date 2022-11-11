@@ -1,4 +1,5 @@
 import {GetFollowing} from "src/common/interfaces";
+import {waitFor} from "src/common/utils";
 
 const getFollowing: GetFollowing = async function getFollowing(username) {
   return this.getPage(`/${username}`, async (page) => {
@@ -29,7 +30,7 @@ const getFollowing: GetFollowing = async function getFollowing(username) {
     }
 
     await buttonOfFollowingList.click();
-    await page.waitFor(1000);
+    await waitFor(1000);
 
     const following = await page.evaluate(async () => {
       const {scraper} = window as any;
